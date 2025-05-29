@@ -1,0 +1,14 @@
+
+=== Starting MongoDB Connection Test ===
+Connection String: mongodb+srv://bechar:Aminata23@cluster0.hcdjf.mongodb.net/mern?retryWrites=true&w=majority
+
+[1/3] Testing network connectivity...
+La requ�te Ping n'a pas pu trouver l'h�te cluster0.hcdjf.mongodb.net. V�rifiez le nom et essayez � nouveau.
+
+
+[2/3] Testing MongoDB connection...
+Successfully connected to MongoDB!
+Connection readyState:
+
+[3/3] Testing database query...
+Database ping successful:
