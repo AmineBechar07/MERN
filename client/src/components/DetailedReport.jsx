@@ -152,7 +152,7 @@ export default function DetailedReport() {
       setLoading(true);
       try {
         // Fetch main report data
-        const reportRes = await fetch(`http://localhost:5000/api/evaluation/detailed-report?page=${currentPage}&type=${type}`);
+        const reportRes = await fetch(`https://mern-1-bems.onrender.com/api/evaluation/detailed-report?page=${currentPage}&type=${type}`);
         if (!reportRes.ok) throw new Error('Failed to fetch evaluation data');
         const responseData = await reportRes.json();
 
@@ -291,7 +291,7 @@ export default function DetailedReport() {
         try {
           // Only proceed if there's actual rating data to save
           if (payload.criteria_1_rating > 0 || payload.criteria_2_rating > 0 || payload.criteria_3_rating > 0) {
-            const res = await fetch('http://localhost:5000/api/evaluations/save', {
+            const res = await fetch('https://mern-1-bems.onrender.com/api/evaluations/save', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(payload),

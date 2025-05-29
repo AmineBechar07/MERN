@@ -38,7 +38,7 @@ export default function EvaluationTypeSelection() {
         setLoadingStates(prev => ({ ...prev, [type.key]: true }));
         try {
           // Step 1: Fetch totalPages for the current type
-          const reportRes = await fetch(`http://localhost:5000/api/evaluation/detailed-report?page=1&type=${type.key}`);
+          const reportRes = await fetch(`https://mern-1-bems.onrender.com/api/evaluation/detailed-report?page=1&type=${type.key}`);
           if (!reportRes.ok) {
             console.warn(`Failed to fetch total pages for ${type.key}. Status: ${reportRes.status}`);
             newStatuses[type.key] = { isComplete: false, totalPages: 0, error: `Failed to load page count for ${type.name}` };
