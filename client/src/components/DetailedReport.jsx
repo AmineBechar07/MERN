@@ -456,7 +456,7 @@ const fetchCollections = async () => {
                     <>
                       {Object.entries(currentPageData.mistral || {})
                         .filter(([key]) => {
-                          const excludedKeys = ['_id', 'page', 'type', 'Étiquette', 'Explication de l\'Étiquette', 'Bio Étiquette', 'Bio Explication de l\'Étiquette'];
+                          const excludedKeys = ['_id', 'page', 'type','id_report', 'Étiquette', 'Explication de l\'Étiquette', 'Bio Étiquette', 'Bio Explication de l\'Étiquette'];
                           return !excludedKeys.includes(key) && 
                                  !key.startsWith('criteria');
                         })
@@ -577,7 +577,7 @@ function EvaluationCard({ title, modelName, displayData, ratingsData, hoverState
                 {displayData?.["Étiquette"] || "Aucune étiquette disponible"}
               </p>
             </div>
-            {(displayData?.["Bio Explication de l\'Étiquette"]) && (
+            {(displayData?.["Explication de l\'Étiquette"]) && (
               <div className="bg-green-50 p-3 rounded-md border border-green-200">
                 <h4 className="font-bold text-green-800">Explication de l'Étiquette</h4>
                 <p className="text-green-700">
