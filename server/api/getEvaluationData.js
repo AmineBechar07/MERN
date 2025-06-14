@@ -26,10 +26,7 @@ async function getFirstDocuments() {
 
 async function getCollectionCounts() {
   try {
-    console.log('Starting getCollectionCounts...');
     const db = mongoose.connection.db;
-    console.log('Mongoose connection state:', mongoose.connection.readyState);
-    
     const collections = [
       'non-invasive-stage-mistral',
       'non-invasive-stage-deepseek-new', 
@@ -38,20 +35,15 @@ async function getCollectionCounts() {
       'invasive-stage-deepseek',
       'invasive-stage-biomistral'
     ];
-    console.log('Collections to count:', collections);
 
     const counts = {};
     for (const collection of collections) {
-      console.log(`Counting documents in ${collection}...`);
       counts[collection] = await db.collection(collection).countDocuments();
-      console.log(`Count for ${collection}:`, counts[collection]);
     }
     
-    console.log('Final counts:', counts);
     return counts;
   } catch (error) {
     console.error('Error counting documents:', error);
-    console.error('Error stack:', error.stack);
     return {};
   }
 }
@@ -105,7 +97,12 @@ async function getDetailedReport(type, page = 1) {
 
     const documents = deepseekDocs.map((deepseekDoc, index) => {
       const mistralDoc = mistralDocs[index] || {};
-      return { ...deepseekDoc, ...mistralDoc };
+      const combined = {
+        ...deepseekDoc,
+        'Bio Étiquette': mistralDoc['Étiquette'],
+        'Bio Explication de l\'Étiquette': mistralDoc['Explication de l\'Étiquette']
+      };
+      return combined;
     });
     console.log('[getDetailedReport] Successfully combined documents.');
 
@@ -126,13 +123,11 @@ async function isPageEvaluated(page, type) {
   try {
     const Evaluation = require('../models/Evaluation');
     
-    // Count evaluations for this page and type
     const count = await Evaluation.countDocuments({
       id_report: page,
       type_of_report: type
     });
 
-    // Page is complete if we have at least 2 evaluations (one for each model)
     return count >= 2;
   } catch (error) {
     console.error('Error checking page evaluations:', error);
