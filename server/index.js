@@ -4,6 +4,8 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const User = require('./models/User');
 const NonInvasiveStage = require('./models/NonInvasiveStage');
+const InvasiveStageDeepseek = require('./models/InvasiveStageDeepseek');
+const InvasiveStageBiomistral = require('./models/InvasiveStageBiomistral');
 const Evaluation = require('./models/Evaluation'); // Added Evaluation model
 require('dotenv').config();
 const path = require('path'); // Import path module
@@ -154,7 +156,7 @@ const getEvaluationTypeCompletionStatusRouter = require('./api/getEvaluationType
 app.get('/api/evaluation/detailed-report', async (req, res) => {
   try {
     const { type, page = 1 } = req.query;
-    if (!type || !['advanced', 'non-invasive'].includes(type)) {
+    if (!type || !['advanced', 'non-invasive', 'invasive'].includes(type)) {
       return res.status(400).json({ message: 'Invalid type parameter' });
     }
 
@@ -224,6 +226,28 @@ app.get('/api/non-invasive-stage-mistral', async (req, res) => {
     res.json(data);
   } catch (err) {
     console.error('Error fetching non-invasive stage data:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get invasive stage deepseek data
+app.get('/api/invasive-stage-deepseek', async (req, res) => {
+  try {
+    const data = await InvasiveStageDeepseek.find();
+    res.json(data);
+  } catch (err) {
+    console.error('Error fetching invasive stage deepseek data:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get invasive stage biomistral data
+app.get('/api/invasive-stage-biomistral', async (req, res) => {
+  try {
+    const data = await InvasiveStageBiomistral.find();
+    res.json(data);
+  } catch (err) {
+    console.error('Error fetching invasive stage biomistral data:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });

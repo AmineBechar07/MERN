@@ -66,8 +66,8 @@ export default function EvaluationTypeSelection() {
           newStatuses[type.key] = { 
             isComplete: statusData.allPagesComplete, 
             totalPages: totalPages,
-            totalEvaluationsSubmitted: statusData.totalEvaluationsSubmitted,
-            completedEvaluationCount: statusData.completedEvaluationCount 
+            totalEvaluationsSubmitted: statusData.totalEvaluationsSubmitted || 0,
+            completedEvaluationCount: statusData.completedEvaluationCount || 0
             // error: statusData.allPagesComplete ? undefined : (status.error || 'Pending evaluations') // Retain existing error or set default
           };
           if (!statusData.allPagesComplete && !newStatuses[type.key].error) {
@@ -167,7 +167,9 @@ export default function EvaluationTypeSelection() {
                       {!isLoading && status && status.error && <span className="ml-2 text-sm text-red-500">({status.error})</span>}
                     </h3>
                     <p className={`text-sm ${subTextColor} mt-1`}>{type.description}</p>
-                    {/* The section displaying Status, Source Pages, and Evaluations Submitted has been removed as per user request. */}
+                    <p className={`text-xs ${subTextColor} mt-1`}>
+                      {status ? `(${status.totalEvaluationsSubmitted} / ${status.totalPages * 2} evaluations)` : ''}
+                    </p>
                      {!isLoading && status && status.totalPages === 0 && !status.error && (
                         <p className={`text-xs ${subTextColor} mt-1`}>Aucune page trouvée pour ce type.</p>
                     )}

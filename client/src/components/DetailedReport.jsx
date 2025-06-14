@@ -39,26 +39,34 @@ export default function DetailedReport() {
   
   // Fetch collections on mount (only once)
   useEffect(() => {
-    const fetchCollections = async () => {
-      try {
-        const collectionsRes = await fetch('/api/test-collections');
-        if (!collectionsRes.ok) throw new Error('Failed to fetch collections');
-        const collectionsData = await collectionsRes.json();
-        setCollections(collectionsData);
-        
-        // Fetch counts for each collection
-        const counts = {};
-        for (const coll of collectionsData) {
-          const countRes = await fetch(`/api/evaluation/collection-counts?collection=${coll}`);
-          if (countRes.ok) {
-            counts[coll] = await countRes.json();
-          }
-        }
-        setCollectionCounts(counts);
-      } catch (err) {
-        setError(err.message);
+const fetchCollections = async () => {
+  try {
+    const collectionsRes = await fetch('/api/test-collections');
+    if (!collectionsRes.ok) throw new Error('Failed to fetch collections');
+    const collectionsData = await collectionsRes.json();
+    
+    // Add new collections for Cancer du sein Invasif
+    const allCollections = [
+      ...collectionsData,
+      'invasive-stage-deepseek',
+      'invasive-stage-biomistral'
+    ];
+    
+    setCollections(allCollections);
+    
+    // Fetch counts for each collection
+    const counts = {};
+    for (const coll of allCollections) {
+      const countRes = await fetch(`/api/evaluation/collection-counts?collection=${coll}`);
+      if (countRes.ok) {
+        counts[coll] = await countRes.json();
       }
-    };
+    }
+    setCollectionCounts(counts);
+  } catch (err) {
+    setError(err.message);
+  }
+};
     
     fetchCollections();
   }, []);
@@ -157,10 +165,13 @@ export default function DetailedReport() {
         const responseData = await reportRes.json();
 
         if (isMounted) {
+          const mistralData = responseData.documents?.[0] || {};
+          const deepseekData = responseData.documents?.[0] || {};
+
           const combinedData = {
             ...responseData,
-            mistral: responseData.documents?.[0] || {}, // Use optional chaining
-            deepseek: responseData.documents?.[0] || {}  // Use optional chaining
+            mistral: mistralData,
+            deepseek: deepseekData,
           };
           
           if (responseData.totalPages !== undefined) {
@@ -476,6 +487,7 @@ export default function DetailedReport() {
                     onHoverChange={(criteriaIndex, star) => handleHoverChange('mistral', criteriaIndex, star)}
                     onRatingChange={(criteriaIndex, rating) => handleRatingChange(currentPage, 'mistral', criteriaIndex, rating)}
                     loading={loading}
+                    cancerType={type}
                   />
                   <EvaluationCard
                     title="Response DeepSeek"
@@ -486,6 +498,7 @@ export default function DetailedReport() {
                     onHoverChange={(criteriaIndex, star) => handleHoverChange('deepseek', criteriaIndex, star)}
                     onRatingChange={(criteriaIndex, rating) => handleRatingChange(currentPage, 'deepseek', criteriaIndex, rating)}
                     loading={loading}
+                    cancerType={type}
                   />
                 </div>
 
@@ -547,7 +560,7 @@ export default function DetailedReport() {
   );
 }
 
-function EvaluationCard({ title, modelName, displayData, ratingsData, hoverStatesForCard, onHoverChange, onRatingChange, loading }) {
+function EvaluationCard({ title, modelName, displayData, ratingsData, hoverStatesForCard, onHoverChange, onRatingChange, loading, cancerType }) {
   const localRatingsData = ratingsData || { criteria_1_rating: 0, criteria_2_rating: 0, criteria_3_rating: 0 };
   const localHoverStates = hoverStatesForCard || { criteria_0: 0, criteria_1: 0, criteria_2: 0 };
 
@@ -560,12 +573,20 @@ function EvaluationCard({ title, modelName, displayData, ratingsData, hoverState
           <>
             <div className="bg-green-50 p-3 rounded-md border border-green-200">
               <h4 className="font-bold text-green-800">Étiquette</h4>
-              <p className="text-green-700">{displayData?.["Bio Étiquette"] || "Aucune étiquette disponible"}</p>
+              <p className="text-green-700">
+                {cancerType === 'invasive' 
+                  ? displayData?.["Étiquette Invasive"] 
+                  : displayData?.["Bio Étiquette"] || "Aucune étiquette disponible"}
+              </p>
             </div>
-            {displayData?.["Bio Explication de l\'Étiquette"] && (
+            {(displayData?.["Bio Explication de l\'Étiquette"] || displayData?.["Explication Invasive"]) && (
               <div className="bg-green-50 p-3 rounded-md border border-green-200">
                 <h4 className="font-bold text-green-800">Explication de l'Étiquette</h4>
-                <p className="text-green-700">{displayData?.["Bio Explication de l\'Étiquette"]}</p>
+                <p className="text-green-700">
+                  {cancerType === 'invasive' 
+                    ? displayData?.["Explication Invasive"] 
+                    : displayData?.["Bio Explication de l\'Étiquette"]}
+                </p>
               </div>
             )}
           </>
@@ -574,12 +595,20 @@ function EvaluationCard({ title, modelName, displayData, ratingsData, hoverState
           <>
             <div className="bg-blue-50 p-3 rounded-md border border-blue-200">
               <h4 className="font-bold text-blue-800">Étiquette</h4>
-              <p className="text-blue-700">{displayData?.["Étiquette"] || "Aucune étiquette DeepSeek disponible"}</p>
+              <p className="text-blue-700">
+                {cancerType === 'invasive' 
+                  ? displayData?.["Étiquette Invasive Deepseek"] 
+                  : displayData?.["Étiquette"] || "Aucune étiquette DeepSeek disponible"}
+              </p>
             </div>
-            {displayData?.["Explication de l'Étiquette"] && (
+            {(displayData?.["Explication de l'Étiquette"] || displayData?.["Explication Invasive Deepseek"]) && (
               <div className="bg-blue-50 p-3 rounded-md border border-blue-200">
                 <h4 className="font-bold text-blue-800">Explication de l'Étiquette</h4>
-                <p className="text-blue-700">{displayData?.["Explication de l'Étiquette"]}</p>
+                <p className="text-blue-700">
+                  {cancerType === 'invasive' 
+                    ? displayData?.["Explication Invasive Deepseek"] 
+                    : displayData?.["Explication de l'Étiquette"]}
+                </p>
               </div>
             )}
           </>
