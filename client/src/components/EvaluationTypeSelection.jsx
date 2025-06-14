@@ -6,20 +6,20 @@ import GlobalNavbar from './GlobalNavbar';
 const evaluationTypes = [
   { key: 'advanced', name: 'Cancer du sein avancé', description: 'Pour les cancers de stade III/IV', defaultBorder: 'border-blue-500', defaultBg: 'bg-blue-50', defaultHoverBg: 'hover:bg-blue-100', defaultText: 'text-blue-700', defaultSubText: 'text-blue-500' },
   { key: 'non-invasive', name: 'Cancer du sein non invasif', description: 'Pour DCIS et LCIS', defaultBorder: 'border-orange-500', defaultBg: 'bg-orange-50', defaultHoverBg: 'hover:bg-orange-100', defaultText: 'text-orange-700', defaultSubText: 'text-orange-500' },
-  // { key: 'invasive', name: 'Invasive Breast Cancer', description: 'Coming Soon - For stage I/II cancers', disabled: true, defaultColor: 'gray' }
+  { key: 'invasive', name: 'Cancer du sein invasif', description: 'Pour les cancers de stade I/II', defaultBorder: 'border-purple-500', defaultBg: 'bg-purple-50', defaultHoverBg: 'hover:bg-purple-100', defaultText: 'text-purple-700', defaultSubText: 'text-purple-500' }
 ];
 
-const disabledType = { 
-  key: 'invasive', 
-  name: 'Cancer du sein invasif', 
-  description: 'Bientôt disponible - Pour les cancers de stade I/II', 
-  disabled: true, 
-  defaultBorder: 'border-gray-300', 
-  defaultBg: 'bg-gray-100', 
-  defaultText: 'text-gray-500', 
-  defaultSubText: 'text-gray-400',
-  cursor: 'cursor-not-allowed opacity-50'
-};
+// const disabledType = { 
+//   key: 'invasive', 
+//   name: 'Cancer du sein invasif', 
+//   description: 'Bientôt disponible - Pour les cancers de stade I/II', 
+//   disabled: true, 
+//   defaultBorder: 'border-gray-300', 
+//   defaultBg: 'bg-gray-100', 
+//   defaultText: 'text-gray-500', 
+//   defaultSubText: 'text-gray-400',
+//   cursor: 'cursor-not-allowed opacity-50'
+// };
 
 export default function EvaluationTypeSelection() {
   const navigate = useNavigate();
@@ -175,13 +175,7 @@ export default function EvaluationTypeSelection() {
                 );
               })}
               
-              {/* Disabled Type Example */}
-              <div
-                className={`block w-full px-6 py-4 border-2 ${disabledType.defaultBorder} ${disabledType.defaultBg} rounded-lg text-center ${disabledType.cursor}`}
-              >
-                <h3 className={`text-lg font-medium ${disabledType.defaultText}`}>{disabledType.name}</h3>
-                <p className={`text-sm ${disabledType.defaultSubText} mt-1`}>{disabledType.description}</p>
-              </div>
+              {/* Disabled Type Example - Removed as it's now part of evaluationTypes */}
             </div>
 
             {/* Removed the old "Proceed to Final Submission" button */}

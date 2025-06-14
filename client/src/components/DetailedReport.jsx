@@ -640,7 +640,7 @@ function EvaluationCard({ title, modelName, displayData, ratingsData, hoverState
       {/* Rating Section (Restored) */}
       <div className="mt-6 space-y-6 relative z-10">
         <h4 className="text-md font-semibold text-gray-700">Critères d'Évaluation: </h4>
-        {['Critère 1', 'Critère 2', 'Critère 3'].map((criteriaName, i) => (
+        {['Exactitude du Diagnostic', 'Complétude des Informations', 'Clarté et Pertinence des Recommandations'].map((criteriaName, i) => (
           <div key={`${modelName}-rating-${i}`} className="space-y-2">
             <label className="block font-medium">{criteriaName}</label>
             {/* Pass criteria index 'i' to onHoverChange for mouseLeave */}
