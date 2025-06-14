@@ -574,18 +574,14 @@ function EvaluationCard({ title, modelName, displayData, ratingsData, hoverState
             <div className="bg-green-50 p-3 rounded-md border border-green-200">
               <h4 className="font-bold text-green-800">Étiquette</h4>
               <p className="text-green-700">
-                {cancerType === 'invasive' 
-                  ? displayData?.["Étiquette Invasive"] 
-                  : displayData?.["Bio Étiquette"] || "Aucune étiquette disponible"}
+                {displayData?.["Étiquette"] || "Aucune étiquette disponible"}
               </p>
             </div>
-            {(displayData?.["Bio Explication de l\'Étiquette"] || displayData?.["Explication Invasive"]) && (
+            {(displayData?.["Bio Explication de l\'Étiquette"]) && (
               <div className="bg-green-50 p-3 rounded-md border border-green-200">
                 <h4 className="font-bold text-green-800">Explication de l'Étiquette</h4>
                 <p className="text-green-700">
-                  {cancerType === 'invasive' 
-                    ? displayData?.["Explication Invasive"] 
-                    : displayData?.["Bio Explication de l\'Étiquette"]}
+                  {displayData?.["Explication de l\'Étiquette"]}
                 </p>
               </div>
             )}
@@ -596,18 +592,14 @@ function EvaluationCard({ title, modelName, displayData, ratingsData, hoverState
             <div className="bg-blue-50 p-3 rounded-md border border-blue-200">
               <h4 className="font-bold text-blue-800">Étiquette</h4>
               <p className="text-blue-700">
-                {cancerType === 'invasive' 
-                  ? displayData?.["Étiquette Invasive Deepseek"] 
-                  : displayData?.["Étiquette"] || "Aucune étiquette DeepSeek disponible"}
+                {displayData?.["Étiquette"] || "Aucune étiquette DeepSeek disponible"}
               </p>
             </div>
-            {(displayData?.["Explication de l'Étiquette"] || displayData?.["Explication Invasive Deepseek"]) && (
+            {(displayData?.["Explication de l'Étiquette"]) && (
               <div className="bg-blue-50 p-3 rounded-md border border-blue-200">
                 <h4 className="font-bold text-blue-800">Explication de l'Étiquette</h4>
                 <p className="text-blue-700">
-                  {cancerType === 'invasive' 
-                    ? displayData?.["Explication Invasive Deepseek"] 
-                    : displayData?.["Explication de l'Étiquette"]}
+                  {displayData?.["Explication de l'Étiquette"]}
                 </p>
               </div>
             )}
