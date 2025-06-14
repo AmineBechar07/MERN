@@ -1,6 +1,5 @@
-import { useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import GlobalNavbar from './GlobalNavbar';
 
 const evaluationTypes = [
@@ -36,11 +35,36 @@ const fetchEvaluationTypeStatus = async (type) => {
   };
 };
 
-function EvaluationTypeCard({ type }) {
-  const { data: status, isLoading, error } = useQuery({
-    queryKey: ['evaluationTypeStatus', type.key],
-    queryFn: () => fetchEvaluationTypeStatus(type),
-  });
+function EvaluationTypeCard({ type, onStatusChange }) {
+  const [status, setStatus] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    
+    const fetchStatus = async () => {
+      try {
+        const data = await fetchEvaluationTypeStatus(type);
+        if (isMounted) {
+          setStatus(data);
+          setIsLoading(false);
+          onStatusChange(data); // Notify parent of status change
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err);
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchStatus();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [type, onStatusChange]);
 
   // Default to red
   let borderColor = 'border-red-500';
@@ -83,19 +107,24 @@ function EvaluationTypeCard({ type }) {
 
 export default function EvaluationTypeSelection() {
   const navigate = useNavigate();
-  const queries = evaluationTypes.map(type => {
-    return useQuery({
-      queryKey: ['evaluationTypeStatus', type.key],
-      queryFn: () => fetchEvaluationTypeStatus(type),
-    });
-  });
+  const [allTypesReady, setAllTypesReady] = useState(false);
+  const [typeStatuses, setTypeStatuses] = useState({});
 
-  const allTypesReadyForSubmission = useMemo(() => {
-    return queries.every(query => {
-      const { data: status } = query;
+  useEffect(() => {
+    // Update overall status when individual type statuses change
+    const ready = evaluationTypes.every(type => {
+      const status = typeStatuses[type.key];
       return status && status.totalPages > 0 && status.totalEvaluationsSubmitted === status.totalPages * 2;
     });
-  }, [queries]);
+    setAllTypesReady(ready);
+  }, [typeStatuses]);
+
+  const handleStatusChange = (typeKey, newStatus) => {
+    setTypeStatuses(prev => ({
+      ...prev,
+      [typeKey]: newStatus
+    }));
+  };
 
   const handleNavbarSubmit = () => {
     navigate('/centered-with-wide-buttons');
@@ -104,7 +133,7 @@ export default function EvaluationTypeSelection() {
   return (
     <div className="min-h-full">
       <GlobalNavbar
-        isSubmissionEnabled={allTypesReadyForSubmission}
+        isSubmissionEnabled={allTypesReady}
         onSubmitClick={handleNavbarSubmit}
       />
       <div className="py-10">
@@ -113,7 +142,11 @@ export default function EvaluationTypeSelection() {
             <h2 className="text-xl font-bold text-gray-900 mb-6">Sélectionnez le type d'évaluation</h2>
             <div className="space-y-4">
               {evaluationTypes.map((type) => (
-                <EvaluationTypeCard key={type.key} type={type} />
+                <EvaluationTypeCard 
+                  key={type.key} 
+                  type={type} 
+                  onStatusChange={(status) => handleStatusChange(type.key, status)} 
+                />
               ))}
             </div>
           </div>
